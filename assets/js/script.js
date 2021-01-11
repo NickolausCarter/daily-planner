@@ -43,17 +43,30 @@ $(".saveBtn").click(function() {
   $(this).find(".fa-save").removeClass("fa-spin");
 });
 
-//     $(tasks).forEach(function(task) {
+// identify past, present, and future hours
+var checkStatus = function() {
+  var currentHour = moment().hours();
+  $(".row").find("textarea").removeClass("present past future")
+  $(".row").each(function() {
+    var taskHour = this.id;
+      if (taskHour == currentHour) {
+        $(this).find("textarea").addClass("present");
+      } else if (taskHour < currentHour) {
+        $(this).find("textarea").addClass("past");
+      } else {
+        $(this).find("textarea").addClass("future");
+      }
+  })
+};
 
-//     })
-//     var text = $(".taskText").val().trim();
-//     console.log(text)
-//     saveTasks(text);
-//   });
-// }
+// update task coloring every 10 minutes
+setInterval(function() {
+  checkStatus();
+}, (1000 * 60) * 10);
 
-// $("#save9").click(function() {
-//   var taskCall = $("#task9").val();
-//   localStorage.setItem('task9', taskCall);
-// })
-loadTasks();
+// set page on first load
+setTimeout(function() {
+  loadTasks();
+  checkStatus();
+  $("#currentDay").text(moment().format("dddd, MMMM Do YYYY LTS"))
+}, 0);
